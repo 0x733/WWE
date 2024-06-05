@@ -25,16 +25,20 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Set up ChromeDriver
+    - name: Install ChromeDriver and Chrome
       run: |
         sudo apt-get update
-        sudo apt-get install -y wget unzip
+        sudo apt-get install -y wget unzip xvfb
         wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip
-        unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
-        sudo apt-get install -y chromium-browser
+        unzip /tmp/chromedriver.zip -d /usr/local/bin/
+        sudo apt-get install -y google-chrome-stable
 
     - name: Run Python script
-      run: python WWE.py
+      env:
+        DISPLAY: :99
+      run: |
+        sudo Xvfb :99 -ac &
+        python WWE.py
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
