@@ -31,15 +31,19 @@ try:
     print("WWE içeriği aranıyor...")
     # Belirli bir sınıf içinde sadece "WWE" içeren tüm öğeleri bulma
     wwe_content = soup.find_all(class_="LayoutContent")
-    wwe_content = [item for item in wwe_content if "WWE" in item.text]
+    wwe_content = [item.text for item in wwe_content if "WWE" in item.text]
 
     # HTML formatında WWE içeriklerini yazdırma ve index.html dosyasına kaydetme
     if wwe_content:
         print("Bulunan WWE içeriği:")
         with open("index.html", "w", encoding="utf-8") as file:
             file.write("<html><head><title>WWE İçerikleri</title></head><body>")
-            for item in wwe_content:
-                file.write(str(item))
+            file.write("<h1>WWE İçerikleri</h1>")
+            file.write("<table border='1'>")
+            file.write("<tr><th>Sıra</th><th>İçerik</th></tr>")
+            for i, item in enumerate(wwe_content, 1):
+                file.write("<tr><td>{}</td><td>{}</td></tr>".format(i, item))
+            file.write("</table>")
             file.write("</body></html>")
         print("index.html dosyası oluşturuldu.")
     else:
