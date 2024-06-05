@@ -33,6 +33,17 @@ try:
     wwe_content = soup.select(".TRow1")
     wwe_content = [item.text.strip() for item in wwe_content if "WWE" in item.text]
 
+    # Saat, tarih ve kanal bilgisini içeren tüm öğeleri bulma
+    wwe_details = soup.select(".FeatureCategory")
+
+    # Saat, tarih ve kanal bilgisini ayıklama
+    event_details = []
+    for detail in wwe_details:
+        text = detail.text.strip()
+        if "Online Stream" in text:
+            details = text.split(" - ")
+            event_details.append(details)
+
     # HTML formatında WWE içeriklerini yazdırma ve index.html dosyasına kaydetme
     if wwe_content:
         print("Bulunan WWE içeriği:")
@@ -47,9 +58,9 @@ try:
             file.write("</head><body>")
             file.write("<h1 style='text-align: center;'>WWE İçerikleri</h1>")
             file.write("<table>")
-            file.write("<tr><th style='width: 10%;'>Sıra</th><th>İçerik</th></tr>")
-            for i, item in enumerate(wwe_content, 1):
-                file.write(f"<tr><td>{i}</td><td>{item}</td></tr>")
+            file.write("<tr><th style='width: 10%;'>Sıra</th><th>İçerik</th><th>Tarih</th><th>Saat</th><th>Kanal</th></tr>")
+            for i, (content, detail) in enumerate(zip(wwe_content, event_details), 1):
+                file.write(f"<tr><td>{i}</td><td>{content}</td><td>{detail[0]}</td><td>{detail[1]}</td><td>{detail[2]}</td></tr>")
             file.write("</table>")
             file.write("</body></html>")
         print("index.html dosyası oluşturuldu.")
