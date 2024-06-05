@@ -28,11 +28,15 @@ jobs:
     - name: Install ChromeDriver and Chrome
       run: |
         sudo apt-get update
-        sudo apt-get install -y wget unzip xvfb google-chrome-stable
-        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
-        CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+        sudo apt-get install -y wget unzip xvfb
+        # Latest Chrome installation
+        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+        sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get install -f
+        # Get Chrome version and corresponding ChromeDriver version
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+' | head -n1)
+        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION%.*})
         wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip
-        unzip /tmp/chromedriver.zip -d /usr/local/bin/
+        sudo unzip /tmp/chromedriver.zip -d /usr/local/bin/
 
     - name: Run Python script
       env:
