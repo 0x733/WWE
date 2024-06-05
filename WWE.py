@@ -30,7 +30,7 @@ try:
 
     print("WWE içeriği aranıyor...")
     # Belirli bir sınıf içinde sadece "WWE" içeren tüm öğeleri bulma
-    wwe_content = soup.find_all(class_="LayoutContent")
+    wwe_content = soup.select("div.Table:nth-of-type(2) > .TableContents > .TBase.TableBorderColor")
     wwe_content = [item.text for item in wwe_content if "WWE" in item.text]
 
     # İçeriği sıralama ve numaralandırma
@@ -43,15 +43,15 @@ try:
         with open("index.html", "w", encoding="utf-8") as file:
             file.write("<html><head><title>WWE İçerikleri</title>")
             file.write("<style>")
-            file.write("body { background-color: black; color: white; }")
-            file.write("table { width: 100%; border-collapse: collapse; }")
+            file.write("body { background-color: black; color: white; font-family: Arial, sans-serif; }")
+            file.write("table { width: 80%; margin: auto; border-collapse: collapse; }")
             file.write("th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }")
             file.write("tr:hover { background-color: #f5f5f5; }")
             file.write("</style>")
             file.write("</head><body>")
-            file.write("<h1>WWE İçerikleri</h1>")
+            file.write("<h1 style='text-align: center;'>WWE İçerikleri</h1>")
             file.write("<table>")
-            file.write("<tr><th>Sıra</th><th>İçerik</th></tr>")
+            file.write("<tr><th style='width: 10%;'>Sıra</th><th>İçerik</th></tr>")
             for i, item in enumerate(wwe_content_with_numbers, 1):
                 file.write(f"<tr><td>{i}</td><td>{item}</td></tr>")
             file.write("</table>")
