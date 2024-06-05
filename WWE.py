@@ -28,18 +28,13 @@ try:
     # HTML içeriğini işleme
     soup = BeautifulSoup(page_source, "html.parser")
 
-    print("WWE etkinliklerini aranıyor...")
+    print("WWE içeriği aranıyor...")
     # Belirli bir sınıf içinde sadece "WWE" içeren tüm öğeleri bulma
-    wwe_events = soup.find_all("a", string=lambda text: "WWE" in text)
-
-    # WWE etkinliklerinin linklerini saklama
-    wwe_event_links = [event["href"] for event in wwe_events]
-
-    # WWE etkinliklerinin adlarını saklama
-    wwe_event_names = [event.text.strip() for event in wwe_events]
+    wwe_content = soup.select(".TRow1")
+    wwe_content = [item.text.strip() for item in wwe_content if "WWE" in item.text]
 
     # HTML formatında WWE içeriklerini yazdırma ve index.html dosyasına kaydetme
-    if wwe_event_names:
+    if wwe_content:
         print("Bulunan WWE içeriği:")
         with open("index.html", "w", encoding="utf-8") as file:
             file.write("<html><head><title>WWE İçerikleri</title>")
@@ -52,25 +47,9 @@ try:
             file.write("</head><body>")
             file.write("<h1 style='text-align: center;'>WWE İçerikleri</h1>")
             file.write("<table>")
-            file.write("<tr><th style='width: 10%;'>Sıra</th><th>İçerik</th><th>Tarih</th><th>Kanal</th></tr>")
-            for i, (name, link) in enumerate(zip(wwe_event_names, wwe_event_links), 1):
-                # Her etkinlik sayfasına gitme
-                driver.get(url + link)
-                # Sayfanın tam olarak yüklenmesini bekleyin
-                wait.until(EC.presence_of_element_located((By.CLASS_NAME, "InformationBoxRow")))
-                # Sayfa kaynağını alın
-                event_page_source = driver.page_source
-                # HTML içeriğini işleme
-                event_soup = BeautifulSoup(event_page_source, "html.parser")
-                # Etkinlik bilgilerini bulma
-                event_info_boxes = event_soup.select(".InformationBoxRow")
-                event_info = {}
-                for info_box in event_info_boxes:
-                    title = info_box.find(class_="InformationBoxTitle").text.strip()
-                    content = info_box.find(class_="InformationBoxContents").text.strip()
-                    event_info[title] = content
-                # Etkinlik bilgilerini HTML dosyasına yazdırma
-                file.write(f"<tr><td>{i}</td><td>{name}</td><td>{event_info.get('Date', '')}</td><td>{event_info.get('TV station/network', '')}</td></tr>")
+            file.write("<tr><th style='width: 10%;'>Sıra</th><th>İçerik</th></tr>")
+            for i, item in enumerate(wwe_content, 1):
+                file.write(f"<tr><td>{i}</td><td>{item}</td></tr>")
             file.write("</table>")
             file.write("</body></html>")
         print("index.html dosyası oluşturuldu.")
