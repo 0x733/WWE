@@ -1,9 +1,8 @@
 name: Publish HTML
 
 on:
-  push:
-    branches:
-      - main
+  schedule:
+    - cron: '0 0 * * *'  # Her gece 00:00'da çalışacak
 
 jobs:
   build:
@@ -24,13 +23,15 @@ jobs:
         pip install selenium beautifulsoup4
 
     - name: Set up ChromeDriver
-      uses: actions/virtual-environments@v2
-      with:
-        tool: chromedriver
-        version: latest
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y wget unzip
+        wget -O /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
+        unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
+        sudo apt-get install -y chromium-browser
 
     - name: Run Python script
-      run: python WWE.py
+      run: python ww.py
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
